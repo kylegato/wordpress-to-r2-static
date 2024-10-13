@@ -1,5 +1,9 @@
 # WordPress to R2 Static Site Worker
 
+Do you have a simple Wordpress website that basically never changes? Some boring business frontend where pages and posts are rarely published? Not sure you need Wordpress when all you really need is a static site? Then this CloudFlare worker tool is probably for you!
+
+# Summary
+
 Convert your WordPress site to a static site by caching it in Cloudflare R2 over time. This project uses Cloudflare Workers to gradually build a static backup of your WordPress site, allowing you to switch to a fully static version when ready.
 
 ## Quick Start
