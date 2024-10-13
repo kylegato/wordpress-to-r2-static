@@ -22,21 +22,31 @@ async function handleRequest(event) {
   }
 
   // Check if there's a redirect for this path
-  const redirect = await REDIRECTS.get(cacheKey, { type: "json" })
-  if (redirect) {
-    debug(`Redirect found for: ${cacheKey}`)
-    return Response.redirect(redirect.target, redirect.type)
+  try {
+    const redirect = await REDIRECTS.get(cacheKey, { type: "json" })
+    if (redirect) {
+      debug(`Redirect found for: ${cacheKey}`)
+      return Response.redirect(redirect.target, redirect.type)
+    }
+  } catch (error) {
+    debug(`Error retrieving redirect for ${cacheKey}: ${error}`)
+    // Continue execution, as we'll fetch from origin if redirect isn't found
   }
 
   // Check if the content is already cached in R2
-  const cachedResponse = await MY_BUCKET.get(cacheKey)
-  if (cachedResponse) {
-    debug(`Cache hit for: ${cacheKey}`)
-    const headers = new Headers({
-      'Content-Type': cachedResponse.httpMetadata.contentType,
-      'Cache-Control': 'public, max-age=3600' // Cache for 1 hour
-    })
-    return new Response(cachedResponse.body, { headers })
+  try {
+    const cachedResponse = await MY_BUCKET.get(cacheKey)
+    if (cachedResponse) {
+      debug(`Cache hit for: ${cacheKey}`)
+      const headers = new Headers({
+        'Content-Type': cachedResponse.httpMetadata.contentType,
+        'Cache-Control': 'public, max-age=3600' // Cache for 1 hour
+      })
+      return new Response(cachedResponse.body, { headers })
+    }
+  } catch (error) {
+    debug(`Error retrieving from R2 for ${cacheKey}: ${error}`)
+    // Continue execution, as we'll fetch from origin if R2 retrieval fails
   }
 
   debug(`Cache miss for: ${cacheKey}`)
@@ -51,10 +61,15 @@ async function handleRequest(event) {
         const redirectUrl = originResponse.url
         const redirectType = originResponse.status
         debug(`New redirect detected for: ${cacheKey}`)
-        event.waitUntil(REDIRECTS.put(cacheKey, JSON.stringify({
-          target: redirectUrl,
-          type: redirectType
-        })))
+        try {
+          await REDIRECTS.put(cacheKey, JSON.stringify({
+            target: redirectUrl,
+            type: redirectType
+          }))
+        } catch (error) {
+          debug(`Error storing redirect for ${cacheKey}: ${error}`)
+          // Continue execution, as we can still return the redirect even if storing fails
+        }
         return Response.redirect(redirectUrl, redirectType)
       }
 
@@ -63,9 +78,14 @@ async function handleRequest(event) {
       // Cache all successful responses for cacheable paths
       if (originResponse.ok && !shouldNotCache(url.pathname)) {
         debug(`Caching content for: ${cacheKey}`)
-        event.waitUntil(MY_BUCKET.put(cacheKey, content, {
-          httpMetadata: { contentType: originResponse.headers.get('Content-Type') }
-        }))
+        try {
+          await MY_BUCKET.put(cacheKey, content, {
+            httpMetadata: { contentType: originResponse.headers.get('Content-Type') }
+          })
+        } catch (error) {
+          debug(`Error storing content in R2 for ${cacheKey}: ${error}`)
+          // Continue execution, as we can still return the response even if caching fails
+        }
       }
 
       const headers = new Headers(originResponse.headers)
@@ -76,7 +96,7 @@ async function handleRequest(event) {
         headers: headers
       })
     } catch (error) {
-      console.error(`Fetch error for ${cacheKey}:`, error)
+      debug(`Fetch error for ${cacheKey}: ${error}`)
       return new Response('An error occurred', { status: 500 })
     }
   }
@@ -97,4 +117,3 @@ function shouldNotCache(pathname) {
   ]
   return nonCacheablePaths.some(path => pathname.startsWith(path))
 }
-
