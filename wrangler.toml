@@ -1,0 +1,21 @@
+name = "wordpress-to-r2-static"
+main = "src/index.js"
+compatibility_date = "2023-05-18"
+
+[vars]
+WORDPRESS_BACKEND_ENABLED = true
+WORKER_DEBUG = false
+
+[[r2_buckets]]
+binding = "MY_BUCKET"
+bucket_name = "your-static-site-bucket"
+
+[[kv_namespaces]]
+binding = "REDIRECTS"
+id = "your-kv-namespace-id"
+
+# Worker route configuration
+[triggers]
+routes = [
+  { pattern = "example.com/*", zone_name = "example.com" }
+]
