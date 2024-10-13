@@ -1,9 +1,13 @@
 name = "wordpress-to-r2-static"
 main = "src/index.js"
-compatibility_date = "2023-05-18"
+compatibility_date = "2024-10-13"
+
+route = { pattern = "your-domain.com/*", zone_name = "your-zone-domain.com" }
 
 [vars]
 WORDPRESS_BACKEND_ENABLED = true
+# Set to true to deeply debug all the various functions of the worker
+# Works well with observability enabled true
 WORKER_DEBUG = false
 
 [[r2_buckets]]
@@ -14,8 +18,6 @@ bucket_name = "your-static-site-bucket"
 binding = "REDIRECTS"
 id = "your-kv-namespace-id"
 
-# Worker route configuration
-[triggers]
-routes = [
-  { pattern = "example.com/*", zone_name = "example.com" }
-]
+[observability]
+# Set to true to enable logs
+enabled = false
