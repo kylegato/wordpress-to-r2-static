@@ -4,7 +4,12 @@ Do you have a simple Wordpress website that basically never changes? Some boring
 
 # Summary
 
-Convert your WordPress site to a static site by caching it in Cloudflare R2 over time. This project uses Cloudflare Workers to gradually build a static backup of your WordPress site, allowing you to switch to a fully static version when ready.
+Convert your WordPress site to a static site by caching it in Cloudflare R2 (Pages/Content) & CloudFlare KV (Redirects) over time. This project uses Cloudflare Workers to gradually build a static backup of your WordPress site, allowing you to switch to a fully static version when ready.
+
+# Pro Tips
+1. Have your website ready to go before you implement this worker. No more changes/posts.
+2. Have a sitemap.xml ready and published to the Google Webmaster Tools / Google Search Console - This ensures every page is crawled and hit at least once, building up your cache.
+3. Have fun, this should be cheaper than whatever you were paying your Wordpress host.
 
 ## Quick Start
 
