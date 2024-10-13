@@ -73,8 +73,8 @@ Edit the `wrangler.toml` file to include your specific settings. Here's an examp
 | `binding` (for r2_buckets) | The variable name used in the worker to access the R2 bucket | Leave as "MY_BUCKET" unless you change it in the worker code |
 | `binding` (for kv_namespaces) | The variable name used in the worker to access the KV namespace | Leave as "REDIRECTS" unless you change it in the worker code |
 | `id` (for kv_namespaces) | The ID of your KV namespace for storing redirects | Replace with your actual KV namespace ID |
-| `pattern` | The URL pattern for which this worker should run | Replace with your domain and adjust if using a subpath |
-| `zone_name` | The domain name for which this worker should run | Replace with your actual domain name |
+| `pattern` (route) | The URL pattern for which this worker should run | Replace with your domain and adjust if using a subpath |
+| `zone_name` (route) | The domain name for which this worker should run | Replace with your actual domain name |
 
 Make sure to replace the placeholder values (like `your-static-site-bucket`, `your-kv-namespace-id`, and `example.com`) with your actual values before deploying.
 
@@ -134,5 +134,3 @@ id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 binding = "MY_BUCKET"
 bucket_name = "your-static-site-bucket"
 ```
-
-Make sure to also update the `routes` and `zone_name` in the `[triggers]` section with your actual domain information.
