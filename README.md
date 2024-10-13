@@ -7,6 +7,9 @@ Convert your WordPress site to a static site by caching it in Cloudflare R2 over
 1. Clone this repository
 2. Install [Wrangler CLI](https://developers.cloudflare.com/workers/cli-wrangler/install-update)
 3. Configure your `wrangler.toml` route names and worker name so that they are unique to your project
+```
+vi wrangler.toml
+```
 3. Create a KV namespace for redirects in your Cloudflare account
 ```
 wrangler kv:namespace create REDIRECTS
@@ -17,6 +20,9 @@ wrangler r2 bucket create YOUR_BUCKET_NAME
 ```
 5. Update the `wrangler.toml` file with your KV namespace ID and R2 bucket names
 6. Deploy the worker using `wrangler publish`
+```
+wrangler publish
+```
 7. Verify that the worker is working correctly by checking your browser and the Cloudflare dashboard, enable "orange cloud" proxying for your WordPress site/DNS record if not already enabled. This will ensure that all requests to your site are routed through the worker.
 8. After browsing around your site for awhile, you can check the R2 bucket to verify that the site is being cached and the objects and URLs are being served.
 
