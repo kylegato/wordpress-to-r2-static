@@ -5,6 +5,7 @@ compatibility_date = "2024-10-13"
 route = { pattern = "your-domain.com/*", zone_name = "your-zone-domain.com" }
 
 [vars]
+# Set to false after you have cancelled your webhosting and never went to send requests to origin ever again.
 WORDPRESS_BACKEND_ENABLED = true
 # Set to true to deeply debug all the various functions of the worker
 # Works well with observability enabled true
