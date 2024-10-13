@@ -2,6 +2,8 @@ name = "wordpress-to-r2-static"
 main = "src/index.js"
 compatibility_date = "2023-05-18"
 
+route = { pattern = "cfstatictest.dev.napster.com/*", zone_name = "dev.napster.com" }
+
 [vars]
 WORDPRESS_BACKEND_ENABLED = true
 WORKER_DEBUG = false
@@ -13,9 +15,3 @@ bucket_name = "your-static-site-bucket"
 [[kv_namespaces]]
 binding = "REDIRECTS"
 id = "your-kv-namespace-id"
-
-# Worker route configuration
-[triggers]
-routes = [
-  { pattern = "example.com/*", zone_name = "example.com" }
-]
